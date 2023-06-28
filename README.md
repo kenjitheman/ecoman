@@ -1,6 +1,9 @@
 # okiman 
+
 # in dev stage rn ! ! !
+
 okiman is a telegram bot made with Golang 
+
 ### API's in use:
 - https://www.saveecobot.com/en/static/api
 
@@ -20,10 +23,10 @@ go get go.mod
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
+- Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
 
-Please make sure to update tests as appropriate.
+- Please make sure to update tests as appropriate.
 
 ## License
 
