@@ -9,8 +9,8 @@ RUN go mod download
 COPY internal ./internal
 COPY cmd ./cmd
 
-RUN go build -o /app/news-feed-bot ./cmd/
+RUN go build -o /app/all-ecological-info-telegram-bot ./cmd/
 
 EXPOSE 8080
 
-CMD ["/app/-bot"]
+CMD ["/app/all-ecological-info-telegram-bot"]
