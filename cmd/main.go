@@ -1,9 +1,7 @@
-package main 
+package main
 
-import (
-	
-)
+import api "main.go/internal/api"
 
 func main() {
-	
+	api.GetData("Lviv")
 }
