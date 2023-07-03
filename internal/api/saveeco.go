@@ -24,6 +24,7 @@ type CityData struct {
 	} `json:"pollutants"`
 	PlatformName string `json:"platformName"`
 }
+
 // Specify the city name you want to retrieve data for
 func GetData(desiredCity string) {
 	url := "https://api.saveecobot.com/output.json"
@@ -51,16 +52,15 @@ func GetData(desiredCity string) {
 	// Find the data for the desired city
 	for _, cityData := range citiesData {
 		if cityData.CityName == desiredCity {
-			fmt.Println("City Name:", cityData.CityName)
-			fmt.Println("Station Name:", cityData.StationName)
-			fmt.Println("Local Name:", cityData.LocalName)
+			fmt.Println("Місто:", cityData.CityName)
+			fmt.Println("Район:", cityData.StationName)
 
 			for _, pollutant := range cityData.Pollutants {
-				fmt.Println("Pollutant:", pollutant.Pol)
-				fmt.Println("Unit:", pollutant.Unit)
-				fmt.Println("Time:", pollutant.Time)
-				fmt.Println("Value:", pollutant.Value)
-				fmt.Println("Averaging:", pollutant.Averaging)
+				fmt.Println("Забруднювач:", pollutant.Pol)
+				fmt.Println("Одиниці:", pollutant.Unit)
+				fmt.Println("Час:", pollutant.Time)
+				fmt.Println("Значення:", pollutant.Value)
+				fmt.Println("У середньому:", pollutant.Averaging)
 			}
 
 			// Add your logic to process the data for the desired city

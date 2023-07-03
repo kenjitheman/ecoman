@@ -1,4 +1,4 @@
-package botkit
+package bot
 
 import (
 	"context"
