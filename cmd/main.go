@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	// api.FetchAndSaveData()
+	api.FetchAndSaveData()
 	cityData, err := api.GetCityDataFromMongoDB("Kyiv")
 	if err != nil {
 		fmt.Printf("[ERROR] error fetching city data from MongoDB: %v", err)
