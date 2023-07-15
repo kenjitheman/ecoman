@@ -1,10 +1,11 @@
 package main
 
 import (
-	api "main.go/internal/api"
-	// bot "main.go/internal/bot"
+  api "main.go/api"
+  "fmt"
 )
 
-func main() {
-	api.GetData("Lviv")
+func main()  {
+  api.FetchAndSaveData()
+  fmt.Println(api.GetCityDataFromMongoDB("Kyiv"))
 }
