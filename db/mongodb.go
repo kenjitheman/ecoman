@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+  "net/url"
+  "os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,11 +31,21 @@ type CityData struct {
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	username := os.Getenv("USERNAME")
+	password := os.Getenv("PASSWORD")
+	cluster := os.Getenv("CLUSTER")
+	authSource := os.Getenv("AUTH_SOURCE")
+	authMechanism := os.Getenv("AUTH_MECHANISM")
+
+  uri := "mongodb+srv://" + url.QueryEscape(username) + ":" + 
+		url.QueryEscape(password) + "@" + cluster + 
+		"/?authSource=" + authSource +
+		"&authMechanism=" + authMechanism
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to connect to MongoDB: %v", err)
 	}
@@ -91,7 +103,7 @@ func FetchDataFromMongoDB() ([]CityData, error) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+  collection := client.Database("weatherdata").Collection("dataman")
 
 	cursor, err := collection.Find(context.Background(), nil)
 	if err != nil {
@@ -117,7 +129,7 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+  collection := client.Database("weatherdata").Collection("dataman")
 
 	// Delete all existing data before saving new data
 	_, err = collection.DeleteMany(context.Background(), bson.M{})
