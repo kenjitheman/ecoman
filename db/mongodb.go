@@ -4,13 +4,17 @@ import (
 	"context"
 	"fmt"
 	"time"
-  "net/url"
-  "os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+// func init() {
+// 	if err := godotenv.Load("../.env"); err != nil {
+// 		log.Fatal("Error loading .env file:", err)
+// 	}
+// }
 
 type CityData struct {
 	ID          string `json:"id"`
@@ -31,21 +35,24 @@ type CityData struct {
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	username := os.Getenv("USERNAME")
-	password := os.Getenv("PASSWORD")
-	cluster := os.Getenv("CLUSTER")
-	authSource := os.Getenv("AUTH_SOURCE")
-	authMechanism := os.Getenv("AUTH_MECHANISM")
+	// username := os.Getenv("USERNAME")
+	// password := os.Getenv("PASSWORD")
+	// cluster := os.Getenv("CLUSTER")
+	// authSource := os.Getenv("AUTH_SOURCE")
 
-  uri := "mongodb+srv://" + url.QueryEscape(username) + ":" + 
-		url.QueryEscape(password) + "@" + cluster + 
-		"/?authSource=" + authSource +
-		"&authMechanism=" + authMechanism
+	// serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	// opts := options.Client().
+	// 	ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority", username, password, cluster)).SetServerAPIOptions(serverAPI)
+
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().
+		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
+		SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to connect to MongoDB: %v", err)
 	}
@@ -103,7 +110,7 @@ func FetchDataFromMongoDB() ([]CityData, error) {
 	}
 	defer client.Disconnect(context.Background())
 
-  collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database("weatherdata").Collection("dataman")
 
 	cursor, err := collection.Find(context.Background(), nil)
 	if err != nil {
@@ -129,7 +136,7 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	}
 	defer client.Disconnect(context.Background())
 
-  collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database("weatherdata").Collection("dataman")
 
 	// Delete all existing data before saving new data
 	_, err = collection.DeleteMany(context.Background(), bson.M{})
@@ -153,4 +160,3 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	fmt.Println("[SUCCESS] data saved to MongoDB!")
 	done <- true
 }
-
