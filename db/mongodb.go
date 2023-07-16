@@ -3,18 +3,15 @@ package db
 import (
 	"context"
 	"fmt"
+	// "os"
 	"time"
+  // "log"
 
+	// "github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-// func init() {
-// 	if err := godotenv.Load("../.env"); err != nil {
-// 		log.Fatal("Error loading .env file:", err)
-// 	}
-// }
 
 type CityData struct {
 	ID          string `json:"id"`
@@ -35,18 +32,22 @@ type CityData struct {
 }
 
 func getMongoClient() (*mongo.Client, error) {
+	// err := godotenv.Load("../.env")
+	// if err != nil {
+ //    fmt.Printf("Error loading .env file: %v", err) 
+	// 	log.Fatal("Error loading .env file")
+	// }
 	// username := os.Getenv("USERNAME")
 	// password := os.Getenv("PASSWORD")
-	// cluster := os.Getenv("CLUSTER")
-	// authSource := os.Getenv("AUTH_SOURCE")
-
-	// serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+ //  
+ //  serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	// opts := options.Client().
-	// 	ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority", username, password, cluster)).SetServerAPIOptions(serverAPI)
+	// 	ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority", username, password)).
+	// 	SetServerAPIOptions(serverAPI)
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
-		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
+		ApplyURI("mongodb+srv://username:password@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
 		SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
