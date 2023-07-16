@@ -37,7 +37,7 @@ func FetchAndSaveData() ([]db.CityData, error) {
 	select {
 	case <-done:
 		return citiesData, nil
-	case <-time.After(3 * time.Hour):
+	case <-time.After(5 * time.Minute):
 		return nil, fmt.Errorf("[ERROR] data saving took too long")
 	}
 }
