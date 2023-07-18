@@ -25,23 +25,11 @@ type CityData struct {
 		Value     float64 `json:"value"`
 		Averaging string  `json:"averaging"`
 	} `json:"pollutants"`
-	PlatformName string `json:"platformname"`
+	Stations    []string `json:"stations"`
+	PlatformName string   `json:"platformname"`
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	//    fmt.Printf("Error loading .env file: %v", err)
-	// 	log.Fatal("Error loading .env file")
-	// }
-	// username := os.Getenv("USERNAME")
-	// password := os.Getenv("PASSWORD")
-	//
-	//  serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	// opts := options.Client().
-	// 	ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority", username, password)).
-	// 	SetServerAPIOptions(serverAPI)
-
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
 		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
@@ -92,8 +80,8 @@ func GetCityData(cityName, stationName string) (CityData, error) {
 	collection := client.Database("weatherdata").Collection("dataman")
 
 	filter := bson.M{
-		"cityname":    cityName,
-		"stationname": stationName,
+		"cityname": cityName,
+    "stationname": stationName,
 	}
 	var cityData CityData
 	err = collection.FindOne(context.Background(), filter).Decode(&cityData)
@@ -104,7 +92,7 @@ func GetCityData(cityName, stationName string) (CityData, error) {
 	return cityData, nil
 }
 
-func FetchDataFromMongoDB() ([]CityData, error) {
+func FetchDataFromMongoDB(cityName string) ([]CityData, error) {
 	client, err := getMongoClient()
 	if err != nil {
 		return nil, err
@@ -113,7 +101,11 @@ func FetchDataFromMongoDB() ([]CityData, error) {
 
 	collection := client.Database("weatherdata").Collection("dataman")
 
-	cursor, err := collection.Find(context.Background(), nil)
+	filter := bson.M{
+		"cityname": cityName,
+	}
+
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -126,6 +118,40 @@ func FetchDataFromMongoDB() ([]CityData, error) {
 	}
 
 	return citiesData, nil
+}
+
+func FetchAllCityNamesFromMongoDB() ([]string, error) {
+	client, err := getMongoClient()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+
+	collection := client.Database("weatherdata").Collection("dataman")
+
+	filter := bson.M{}
+
+	cursor, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	citySet := make(map[string]bool)
+	for cursor.Next(context.Background()) {
+		var cityData CityData
+		if err := cursor.Decode(&cityData); err != nil {
+			return nil, err
+		}
+		citySet[cityData.CityName] = true
+	}
+
+	uniqueCityNames := make([]string, 0, len(citySet))
+	for cityName := range citySet {
+		uniqueCityNames = append(uniqueCityNames, cityName)
+	}
+
+	return uniqueCityNames, nil
 }
 
 func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
@@ -159,3 +185,4 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	fmt.Println("[SUCCESS] data saved to MongoDB!")
 	done <- true
 }
+
