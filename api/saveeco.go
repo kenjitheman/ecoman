@@ -10,7 +10,6 @@ import (
 	"main.go/db"
 )
 
-// Fetches data for all cities, saves it to MongoDB, and returns the saved data
 func FetchAndSaveData() ([]db.CityData, error) {
 	url := "https://api.saveecobot.com/output.json"
 
@@ -42,8 +41,7 @@ func FetchAndSaveData() ([]db.CityData, error) {
 	}
 }
 
-// Searches for a city in the database by its name and returns the data if found
-func GetCityDataFromMongoDB(cityName string) (db.CityData, error) {
-	return db.GetCityData(cityName)
+func GetCityDataFromMongoDB(cityName, stationName string) (db.CityData, error) {
+	return db.GetCityData(cityName, stationName)
 }
 

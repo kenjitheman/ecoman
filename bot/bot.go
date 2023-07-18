@@ -14,13 +14,13 @@ import (
 	api "main.go/api"
 )
 
-var isBotRunning bool // Variable to track the bot's status
+var isBotRunning bool
 
 func Datafetch(cityname, stationName string) string {
-	cityData, err := api.GetCityDataFromMongoDB(cityname)
+	cityData, err := api.GetCityDataFromMongoDB(cityname, stationName)
 	if err != nil {
 		fmt.Printf("[ERROR] error fetching city data from MongoDB: %v", err)
-		return "error fetching city data ! \ncity is incorrect !"
+		return "error fetching city data! \ncity is incorrect!"
 	} else {
 		result := fmt.Sprintf("%v City: %s\n", emoji.Cityscape, cityData.CityName)
 		if stationName != "" {
@@ -63,40 +63,38 @@ func StartBot() {
 
 	updates := bot.GetUpdatesChan(u)
 
-	// Create a ticker that ticks every 3 hours
 	ticker := time.NewTicker(3 * time.Hour)
 
-	// Run FetchAndSaveData initially
 	go api.FetchAndSaveData()
 
-	// Create the custom keyboard
 	generalKeyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("/help"),
-			tgbotapi.NewKeyboardButton("/getdata"),
+			tgbotapi.NewKeyboardButton("help"),
+			tgbotapi.NewKeyboardButton("getdata"),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("/info"),
-			tgbotapi.NewKeyboardButton("/status"),
+			tgbotapi.NewKeyboardButton("info"),
+			tgbotapi.NewKeyboardButton("status"),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("/support"),
-			tgbotapi.NewKeyboardButton("/support_creator"),
+			tgbotapi.NewKeyboardButton("support"),
+			tgbotapi.NewKeyboardButton("support_creator"),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("/stop"),
+			tgbotapi.NewKeyboardButton("stop"),
 		),
 	)
 
-	// Create the custom keyboard
 	startKeyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("/start"),
+			tgbotapi.NewKeyboardButton("start"),
 		),
 	)
 
-	// Set the initial bot status to stopped
 	isBotRunning = false
+
+	chatStates := make(map[int64]string)
+	creatorChatID := int64(5785150199)
 
 	for update := range updates {
 		if update.Message == nil {
@@ -104,94 +102,91 @@ func StartBot() {
 		}
 
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+		command := strings.TrimPrefix(update.Message.Text, "/")
 
-		switch update.Message.Command() {
+		switch command {
 		case "start":
 			isBotRunning = true
-			// If bot is running, show the "stop" button
 			if isBotRunning {
-				msg.Text = "ecoman is already running. \nuse /stop to stop the bot"
+				msg.Text = "ecoman is already running\nuse /stop to stop the bot"
 				msg.ReplyMarkup = generalKeyboard
 			} else {
-				// If bot is stopped, show the "start" button
 				leafGreenEmoji := emoji.Sprintf("%v", emoji.LeafyGreen)
-				msg.Text = leafGreenEmoji + " hey, let's start, run /help for usage info !"
+				msg.Text = leafGreenEmoji + " hey, let's start\nrun /help for usage info!"
 				msg.ReplyMarkup = startKeyboard
 			}
 
 		case "help":
 			helpEmoji := emoji.Sprintf("%v", emoji.Information)
-			msg.Text = helpEmoji + " All available commands:\n\n/help - use if you need some help\n\n/getdata - use to get all ecoman data, specify the cityn\n\n/status - use to see working status\n\n/info - use to see more info about creator and bot\n\n/support - use if you found a bug etc.\n\n/support_creator - it's open source free to use product, so i don't get any money from it\n\n/stop - use stop command to stop the bot"
+			msg.Text = helpEmoji + " all available commands:\n\n/help - use if you need some help\n\n/getdata - use to get all ecoman data, specify the city name\n\n/status - use to see working status\n\n/info - use to see more info about creator and bot\n\n/support - use if you found a bug etc.\n\n/support_creator - It's an open-source free-to-use product, so I don't get any money from it\n\n/stop - use stop command to stop the bot"
+
 		case "getdata":
 			getdataEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
 			fetchingMessage := getdataEmoji + " data fetching..."
-			msg.Text = fetchingMessage
-			if len(update.Message.CommandArguments()) > 0 {
-				args := strings.Split(update.Message.CommandArguments(), " ")
-				cityname := args[0]
-				var stationName string
-				if len(args) > 1 {
-					stationName = args[1]
-				}
-				go func() {
-					time.Sleep(1 * time.Second) // simulating data fetching delay
-					dataResult := Datafetch(cityname, stationName)
-					msg.Text = dataResult
-					if _, err := bot.Send(msg); err != nil {
-						log.Panic(err)
-					}
-				}()
-			} else {
-				getdataEmoji := emoji.Sprintf("%v", emoji.Cityscape)
-				msg.Text = getdataEmoji + " please specify a city name after the /getdata command. \n+ example: /getdata Kyiv \n\nand you can specify the station ! \n+ example: /getdata Kyiv Romana Ratushnogo, 4"
-			}
+			msg.Text = fetchingMessage // TODO
 
 		case "status":
 			if err == nil {
 				statusEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
-				msg.Text = statusEmoji + " ecoman is ok, working fine ^_^"
+				msg.Text = statusEmoji + " ecoman is ok, working fine! ^_^"
 			} else {
 				statusEmoji := emoji.Sprintf("%v", emoji.RedCircle)
-				msg.Text = statusEmoji + " ecoman is not ok, something isn't fine -_- \nTry again later -_-"
+				msg.Text = statusEmoji + " ecoman is not ok, something isn't fine -_-\ntry again later -_-"
 			}
 
 		case "info":
 			infoEmoji := emoji.Sprintf("%v", emoji.Information)
-			msg.Text = infoEmoji + " hey, i'm amodotomi, creator of ecoman \n\necoman is a telegram bot that allows you to get the latest information about ecology in Ukraine. \n\ndata updates every 15 minutes \n\nenjoy! ^_^"
+			msg.Text = infoEmoji + " hey, I'm amodotomi, the creator of ecoman.\n\necoman is a telegram bot that allows you to get the latest information about ecology in Ukraine.\ndata updates every 15 minutes.\n\nenjoy! ^_^"
+
+		case "support":
+			chatStates[update.Message.Chat.ID] = "support"
+			msg.Text = "Please describe the problem:"
+			bot.Send(msg)
+
+			for {
+				response := <-updates
+
+				if response.Message == nil {
+					continue
+				}
+
+				if response.Message.Chat.ID != update.Message.Chat.ID {
+					continue
+				}
+
+				description := response.Message.Text
+				GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
+				msg.Text = GreenHeartEmoji + " thanks for your bug report!"
+				bot.Send(msg)
+
+				supportMsg := tgbotapi.NewMessage(
+					creatorChatID,
+					fmt.Sprintf(
+						" bug report from user %s:\n%s",
+						update.Message.From.UserName,
+						description,
+					),
+				)
+				bot.Send(supportMsg)
+
+				delete(chatStates, update.Message.Chat.ID)
+				break
+			}
+
+			continue
+
+		case "support_creator":
+			GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
+			msg.Text = GreenHeartEmoji + " my website: amodotomi.com\n" + GreenHeartEmoji + " my GitHub: github.com/amodotomi\n" + GreenHeartEmoji + " thanks for your support!"
 		case "stop":
 			isBotRunning = false
 			stopEmoji := emoji.Sprintf("%v", emoji.StopSign)
 			msg.Text = stopEmoji + " ecoman has been stopped"
 			msg.ReplyMarkup = startKeyboard
-		case "support":
-			CactusEmoji := emoji.Sprintf("%v", emoji.Cactus)
-			msg.Text = CactusEmoji + " you've found some errors? describe the problem, please. \n+ example: /support error_description"
-			if len(update.Message.CommandArguments()) > 0 {
-				errorDescription := update.Message.CommandArguments()
-				if errorDescription == "" {
-					msg.Text = "please provide an error description after the /support command. \n+ example: /support error_description"
-				} else {
-					// Send the error_description to @amodotomi
-					chatID := int64(5785150199) // Replace with the correct chat ID of @amodotomi
-					_, err := bot.Send(tgbotapi.NewMessage(chatID, errorDescription))
-					if err != nil {
-						log.Printf("[ERROR] failed to send error_description to @amodotomi: %v", err)
-					}
-					// Send a response indicating that the error description has been sent
-					msg.Text = "thank you for reporting the error \nthe description has been sent to @amodotomi"
-				}
-			} else {
-				// Handle when the command is used without error_description
-				msg.Text = "please provide an error description after the /support command. \n+ example: /support error_description"
-			}
-
-		case "support_creator":
-			stopEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
-			msg.Text = stopEmoji + " my website: amodotomi.com\n" + stopEmoji + " my GitHub: github.com/amodotomi\n" + stopEmoji + " thanks for your support!"
 
 		default:
 			defaultEmoji := emoji.Sprintf("%v", emoji.OkHand)
-			msg.Text = defaultEmoji + " sorry, I don't know that command. \nuse /help for a list of all commands or help ^_^"
+			msg.Text = defaultEmoji + " sorry, i don't know that command\nuse /help for a list of all commands or help ^_^"
 		}
 
 		if _, err := bot.Send(msg); err != nil {
@@ -200,10 +195,8 @@ func StartBot() {
 
 		select {
 		case <-ticker.C:
-			// Run FetchAndSaveData every 3 hours
 			go api.FetchAndSaveData()
 		default:
-			// Continue with the loop
 		}
 	}
 }
