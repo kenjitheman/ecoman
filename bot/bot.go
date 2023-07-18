@@ -23,11 +23,7 @@ func Datafetch(cityname, stationName string) string {
 		return "error fetching city data! \ncity is incorrect!"
 	} else {
 		result := fmt.Sprintf("%v City: %s\n", emoji.Cityscape, cityData.CityName)
-		if stationName != "" {
-			result += fmt.Sprintf("%v Station: %s\n", emoji.House, stationName)
-		} else {
-			result += fmt.Sprintf("%v Station: %s\n", emoji.House, cityData.StationName)
-		}
+		result += fmt.Sprintf("%v Station: %s\n", emoji.House, cityData.StationName)
 		result += fmt.Sprintf("%v Latitude: %s\n%v Longitude: %s\n%v Timezone: %s\n",
 			emoji.Compass, cityData.Latitude,
 			emoji.Compass, cityData.Longitude,
@@ -108,7 +104,8 @@ func StartBot() {
 		case "start":
 			isBotRunning = true
 			if isBotRunning {
-				msg.Text = "ecoman is already running\nuse /stop to stop the bot"
+				StartOkEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
+				msg.Text = StartOkEmoji + " ecoman is already running\nuse /stop to stop the bot\nuse /help for more information"
 				msg.ReplyMarkup = generalKeyboard
 			} else {
 				leafGreenEmoji := emoji.Sprintf("%v", emoji.LeafyGreen)
@@ -123,7 +120,7 @@ func StartBot() {
 		case "getdata":
 			getdataEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
 			fetchingMessage := getdataEmoji + " data fetching..."
-			msg.Text = fetchingMessage // TODO
+			msg.Text = fetchingMessage
 
 		case "status":
 			if err == nil {
@@ -140,7 +137,7 @@ func StartBot() {
 
 		case "support":
 			chatStates[update.Message.Chat.ID] = "support"
-			msg.Text = "Please describe the problem:"
+			msg.Text = "please describe the problem:"
 			bot.Send(msg)
 
 			for {
