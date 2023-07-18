@@ -3,11 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
-	// "os"
 	"time"
-  // "log"
 
-	// "github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -34,20 +31,20 @@ type CityData struct {
 func getMongoClient() (*mongo.Client, error) {
 	// err := godotenv.Load("../.env")
 	// if err != nil {
- //    fmt.Printf("Error loading .env file: %v", err) 
+	//    fmt.Printf("Error loading .env file: %v", err)
 	// 	log.Fatal("Error loading .env file")
 	// }
 	// username := os.Getenv("USERNAME")
 	// password := os.Getenv("PASSWORD")
- //  
- //  serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	//
+	//  serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	// opts := options.Client().
 	// 	ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority", username, password)).
 	// 	SetServerAPIOptions(serverAPI)
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
-		ApplyURI("mongodb+srv://username:password@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
+		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
 		SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -85,7 +82,7 @@ func SaveDataToMongoDB(data CityData) error {
 	return nil
 }
 
-func GetCityData(cityName string) (CityData, error) {
+func GetCityData(cityName, stationName string) (CityData, error) {
 	client, err := getMongoClient()
 	if err != nil {
 		return CityData{}, err
@@ -94,7 +91,10 @@ func GetCityData(cityName string) (CityData, error) {
 
 	collection := client.Database("weatherdata").Collection("dataman")
 
-	filter := bson.M{"cityname": cityName}
+	filter := bson.M{
+		"cityname":    cityName,
+		"stationname": stationName,
+	}
 	var cityData CityData
 	err = collection.FindOne(context.Background(), filter).Decode(&cityData)
 	if err != nil {
@@ -139,7 +139,6 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 
 	collection := client.Database("weatherdata").Collection("dataman")
 
-	// Delete all existing data before saving new data
 	_, err = collection.DeleteMany(context.Background(), bson.M{})
 	if err != nil {
 		fmt.Printf("[ERROR] failed to delete existing data from MongoDB: %v\n", err)
@@ -147,7 +146,6 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 		return
 	}
 
-	// Insert new data
 	var documents []interface{}
 	for _, cityData := range data {
 		documents = append(documents, cityData)
