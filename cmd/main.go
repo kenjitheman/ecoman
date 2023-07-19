@@ -2,12 +2,12 @@ package main
 
 import (
 	// "fmt"
-
+  "main.go/bot"
 	// "main.go/db"
 )
 
 func main() {
-	// // bot.StartBot()
+	bot.StartBot()
 	// cityName := "Kyiv"
 	// cityData, err := db.FetchDataFromMongoDB(cityName)
 	// if err != nil {
@@ -29,4 +29,5 @@ func main() {
 	// for _, cityName := range cityNames {
 	// 	fmt.Println(cityName)
 	// }
+
 }
