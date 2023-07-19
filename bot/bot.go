@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 
 	api "main.go/api"
+	"main.go/db"
 )
 
 var isBotRunning bool
@@ -118,9 +119,32 @@ func StartBot() {
 			msg.Text = helpEmoji + " all available commands:\n\n/help - use if you need some help\n\n/getdata - use to get all ecoman data, specify the city name\n\n/status - use to see working status\n\n/info - use to see more info about creator and bot\n\n/support - use if you found a bug etc.\n\n/support_creator - It's an open-source free-to-use product, so I don't get any money from it\n\n/stop - use stop command to stop the bot"
 
 		case "getdata":
-			getdataEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
-			fetchingMessage := getdataEmoji + " data fetching..."
+			getdataEmoji := emoji.Sprintf("%v", emoji.Cityscape)
+			fetchingMessage := getdataEmoji + " please select a city from the list:"
 			msg.Text = fetchingMessage
+			cityNames, err := db.FetchAllCityNamesFromMongoDB()
+			if err != nil {
+				fmt.Printf("[ERROR] failed to fetch city names: %v\n", err)
+				return
+			}
+			var keyboardRows [][]tgbotapi.KeyboardButton
+			row := []tgbotapi.KeyboardButton{}
+			for _, cityName := range cityNames {
+				button := tgbotapi.NewKeyboardButton(cityName)
+				row = append(row, button)
+				if len(row) == 3 {
+					keyboardRows = append(keyboardRows, row)
+					row = []tgbotapi.KeyboardButton{}
+				}
+			}
+			if len(row) > 0 {
+				keyboardRows = append(keyboardRows, row)
+			}
+			citiesKeyboard := tgbotapi.NewReplyKeyboard(keyboardRows...)
+			citiesKeyboard.OneTimeKeyboard = true
+			msg.ReplyMarkup = citiesKeyboard
+
+
 
 		case "status":
 			if err == nil {
