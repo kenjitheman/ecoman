@@ -247,7 +247,6 @@ func StartBot() {
 						}
 						break
 					}
-
 				}
 			}
 			msg.ReplyMarkup = generalKeyboard
