@@ -2,32 +2,19 @@ package main
 
 import (
 	// "fmt"
-  "main.go/bot"
 	// "main.go/db"
+  "main.go/bot"
 )
 
 func main() {
-	bot.StartBot()
-	// cityName := "Kyiv"
-	// cityData, err := db.FetchDataFromMongoDB(cityName)
+  bot.StartBot()
+ //  cityName := "Kyiv"
+ //  cityData, err := db.FetchDataFromMongoDB(cityName)
+ //  for _, data := range cityData {
+	// 	fmt.Println(data.StationName)
+	// }
 	// if err != nil {
-	// 	fmt.Printf("[ERROR] failed to fetch city data: %v\n", err)
+	// 	fmt.Printf("[ERROR] failed to fetch city data for %s: %v\n", cityName, err)
 	// 	return
-	// }
-	// for _, data := range cityData {
-	// 	fmt.Printf
-	// 		data.StationName,
-	// 	)
-	// }
-
-	// cityNames, err := db.FetchAllCityNamesFromMongoDB()
-	// if err != nil {
-	// 	fmt.Printf("[ERROR] failed to fetch city names: %v\n", err)
-	// 	return
-	// }
-	//
-	// for _, cityName := range cityNames {
-	// 	fmt.Println(cityName)
-	// }
-
+ //  }
 }
