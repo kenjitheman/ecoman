@@ -1,31 +1,25 @@
-package openai
+package main
 
 import (
 	"context"
 	"fmt"
+
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func StartOpenai() {
-	client := openai.NewClient("your token")
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "Hello!",
-				},
-			},
-		},
-	)
+func GenerateAdvice(data string) {
+	c := openai.NewClient("your token")
+	ctx := context.Background()
 
+	req := openai.CompletionRequest{
+		Model:     openai.GPT3Ada,
+		MaxTokens: 5,
+		Prompt:    data,
+	}
+	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
-		fmt.Printf("ChatCompletion error: %v\n", err)
+		fmt.Printf("[ERROR] completion error: %v\n", err)
 		return
 	}
-
-	fmt.Println(resp.Choices[0].Message.Content)
+	fmt.Println(resp.Choices[0].Text)
 }
-
