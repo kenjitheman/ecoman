@@ -89,6 +89,13 @@ func StartBot() {
 		),
 	)
 
+	yesOrNoKeyboard := tgbotapi.NewReplyKeyboard(
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton("yes"),
+			tgbotapi.NewKeyboardButton("no"),
+		),
+	)
+
 	isBotRunning = false
 
 	chatStates := make(map[int64]string)
@@ -146,7 +153,7 @@ func StartBot() {
 			msg.ReplyMarkup = citiesKeyboard
 			bot.Send(msg)
 
-      chatStates[update.Message.Chat.ID] = "select_station"
+			chatStates[update.Message.Chat.ID] = "select_station"
 
 			var selectedCity, selectedStation bool
 			var selectedCityName, selectedStationName string
@@ -175,7 +182,8 @@ func StartBot() {
 							)
 							msg := tgbotapi.NewMessage(update.Message.Chat.ID, noDataMessage)
 							bot.Send(msg)
-							break						}
+							break
+						}
 
 						getdataEmoji = emoji.Sprintf("%v", emoji.Cityscape)
 						fetchingMessage = getdataEmoji + " please select a station from the list:"
@@ -207,7 +215,39 @@ func StartBot() {
 					}
 				}
 				if selectedCity && selectedStation {
-					break
+					adviceMsg := "would you like to recieve advice on what is best to do on this day (based on data you got) ?"
+					msg.Text = adviceMsg
+					msg.ReplyMarkup = yesOrNoKeyboard
+					bot.Send(msg)
+
+					for {
+						response := <-updates
+
+						if response.Message == nil {
+							continue
+						}
+
+						if response.Message.Chat.ID != update.Message.Chat.ID {
+							continue
+						}
+
+						switch response.Message.Text {
+						case "yes":
+							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
+							msg.Text = gotchaEmoji + " one second please..."
+							bot.Send(msg)
+						case "no":
+							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
+							msg.Text = gotchaEmoji + " I gotcha!"
+							bot.Send(msg)
+						default:
+							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
+							msg.Text = gotchaEmoji + " I gotcha man!"
+							bot.Send(msg)
+						}
+						break
+					}
+
 				}
 			}
 			msg.ReplyMarkup = generalKeyboard
