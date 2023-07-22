@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -127,6 +128,7 @@ func StartBot() {
 				fmt.Printf("[ERROR] failed to fetch city names: %v\n", err)
 				return
 			}
+			sort.Strings(cityNames)
 			var keyboardRows [][]tgbotapi.KeyboardButton
 			row := []tgbotapi.KeyboardButton{}
 			for _, cityName := range cityNames {
@@ -141,10 +143,74 @@ func StartBot() {
 				keyboardRows = append(keyboardRows, row)
 			}
 			citiesKeyboard := tgbotapi.NewReplyKeyboard(keyboardRows...)
-			citiesKeyboard.OneTimeKeyboard = true
 			msg.ReplyMarkup = citiesKeyboard
+			bot.Send(msg)
 
+      chatStates[update.Message.Chat.ID] = "select_station"
 
+			var selectedCity, selectedStation bool
+			var selectedCityName, selectedStationName string
+			for update := range updates {
+				if update.Message == nil {
+					continue
+				}
+				if update.Message.Text != "" {
+					if !selectedCity {
+						selectedCityName = strings.TrimSpace(update.Message.Text)
+						cityData, err := db.FetchDataFromMongoDB(selectedCityName)
+						if err != nil {
+							errorMessage := fmt.Sprintf(
+								"[ERROR] failed to fetch city data for %s: %v",
+								selectedCityName,
+								err,
+							)
+							msg := tgbotapi.NewMessage(update.Message.Chat.ID, errorMessage)
+							bot.Send(msg)
+							break
+						}
+						if len(cityData) == 0 {
+							noDataMessage := fmt.Sprintf(
+								"no data found for city: %s",
+								selectedCityName,
+							)
+							msg := tgbotapi.NewMessage(update.Message.Chat.ID, noDataMessage)
+							bot.Send(msg)
+							break						}
+
+						getdataEmoji = emoji.Sprintf("%v", emoji.Cityscape)
+						fetchingMessage = getdataEmoji + " please select a station from the list:"
+						msg.Text = fetchingMessage
+
+						var stationButtons [][]tgbotapi.KeyboardButton
+						row := []tgbotapi.KeyboardButton{}
+						for _, data := range cityData {
+							button := tgbotapi.NewKeyboardButton(data.StationName)
+							row = append(row, button)
+							if len(row) == 2 {
+								stationButtons = append(stationButtons, row)
+								row = []tgbotapi.KeyboardButton{}
+							}
+						}
+						if len(row) > 0 {
+							stationButtons = append(stationButtons, row)
+						}
+						stationsKeyboard := tgbotapi.NewReplyKeyboard(stationButtons...)
+						msg.ReplyMarkup = stationsKeyboard
+						bot.Send(msg)
+						selectedCity = true
+					} else if !selectedStation {
+						selectedStationName = strings.TrimSpace(update.Message.Text)
+						result := Datafetch(selectedCityName, selectedStationName)
+						responseMessage := tgbotapi.NewMessage(update.Message.Chat.ID, result)
+						bot.Send(responseMessage)
+						selectedStation = true
+					}
+				}
+				if selectedCity && selectedStation {
+					break
+				}
+			}
+			msg.ReplyMarkup = generalKeyboard
 
 		case "status":
 			if err == nil {
