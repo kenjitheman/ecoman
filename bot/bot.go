@@ -12,8 +12,9 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 
-	api "main.go/api"
+	"main.go/api"
 	"main.go/db"
+	ai "main.go/openai"
 )
 
 var isBotRunning bool
@@ -157,6 +158,8 @@ func StartBot() {
 
 			var selectedCity, selectedStation bool
 			var selectedCityName, selectedStationName string
+			var result string
+
 			for update := range updates {
 				if update.Message == nil {
 					continue
@@ -208,14 +211,14 @@ func StartBot() {
 						selectedCity = true
 					} else if !selectedStation {
 						selectedStationName = strings.TrimSpace(update.Message.Text)
-						result := Datafetch(selectedCityName, selectedStationName)
+						result = Datafetch(selectedCityName, selectedStationName)
 						responseMessage := tgbotapi.NewMessage(update.Message.Chat.ID, result)
 						bot.Send(responseMessage)
 						selectedStation = true
 					}
 				}
 				if selectedCity && selectedStation {
-					adviceMsg := "would you like to recieve advice on what is best to do on this day (based on data you got) ?"
+					adviceMsg := "would you like to receive advice on what is best to do on this day (based on data you got)?"
 					msg.Text = adviceMsg
 					msg.ReplyMarkup = yesOrNoKeyboard
 					bot.Send(msg)
@@ -223,33 +226,25 @@ func StartBot() {
 					for {
 						response := <-updates
 
-						if response.Message == nil {
-							continue
-						}
+						gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
+						yesMsg := gotchaEmoji + " one second please..."
+						noMsg := gotchaEmoji + " i gotcha!"
 
-						if response.Message.Chat.ID != update.Message.Chat.ID {
-							continue
-						}
-
-						switch response.Message.Text {
-						case "yes":
-							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
-							msg.Text = gotchaEmoji + " one second please..."
-							bot.Send(msg)
-						case "no":
-							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
-							msg.Text = gotchaEmoji + " I gotcha!"
-							bot.Send(msg)
-						default:
-							gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
-							msg.Text = gotchaEmoji + " I gotcha man!"
-							bot.Send(msg)
+						if response.Message.Text == "yes" {
+							msg.Text = yesMsg
+              advice := ai.GenerateAdvice(result)
+              msg.Text = advice
+						} else {
+							msg.Text = noMsg
 						}
 						break
 					}
+
+					msg.ReplyMarkup = generalKeyboard
+					bot.Send(msg)
+					break
 				}
 			}
-			msg.ReplyMarkup = generalKeyboard
 
 		case "status":
 			if err == nil {
