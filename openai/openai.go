@@ -14,8 +14,8 @@ import (
 func GenerateAdvice(result string) string {
 	err := godotenv.Load("../.env")
 	if err != nil {
-		fmt.Printf("Error loading .env file: %v", err)
-		log.Fatal("Error loading .env file")
+		fmt.Printf("[ERROR] error loading .env file: %v", err)
+		log.Fatal("[ERROR] error loading .env file")
 	}
 	client := openai.NewClient(os.Getenv("OPENAI_APITOKEN"))
 	resp, err := client.CreateChatCompletion(
