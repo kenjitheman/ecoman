@@ -93,6 +93,7 @@ OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
 go run main.go
 ```
 
+you need your own mongo database and collection configured to run this project
 
 ## Contributing
 
