@@ -1,13 +1,36 @@
-# ecoman
+<h2 align="left">ecoman - telegram bot allows you get ecology data in Ukraine</h2>
 
-- ecoman telegram bot allows you get ecology data in Ukraine
+###
+
+<img align="right" height="200" src="https://media.tenor.com/GCun7zWO5NcAAAAC/sakura-tree.gif"  />
+
+###
+
+<div align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" height="150" alt="go logo"  />
+  <img width="" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="150" alt="docker logo"  />
+  <img width="" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="150" alt="mongodb logo"  />
+</div>
+
+###
+
+<div align="center">
+  <a href="https://t.me/ecomanchan_bot" target="_blank">
+    <img src="https://img.shields.io/static/v1?message=ecoman&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="telegram logo"  />
+  </a>
+</div>
+
+###
+
 - ecoman is a telegram bot made with Golang
-- user is able to choose city and station
+- you are able to choose city and station you interested in
 
 ### API's in use:
 - https://www.saveecobot.com/en/static/api
 
-## data example
+## data you get example
 ```
 🏙️ City: Kyiv
 🏠 Station: Street Henerala Zhmachenka, 4
@@ -73,7 +96,7 @@ Remember, these recommendations are based on the available data and general guid
 git clone https://github.com/amodotomi/all-ecological-info-telegram-bot
 ```
 - #### to get all dependencies
-```bash
+```
 go get go.mod
 ```
 
@@ -87,13 +110,17 @@ OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
 ```
 - then, you need to run docker container\
 (all options are in dockerfile, you can change it if you want)
+```
+docker build -t your_image_name .
+docker run -d -p 8080:80 your_image_name
+```
 
 - or you can:
 ```
 go run main.go
 ```
 
-you need your own mongo database and collection configured to run this project
+### ! you need your own mongo database and collection configured to run this project !
 
 ## Contributing
 
@@ -104,4 +131,4 @@ to discuss what you would like to change.
 
 ## License
 
-- [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
+- [MIT](https://choosealicense.com/licenses/mit/)
