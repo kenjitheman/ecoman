@@ -3,10 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,23 +25,14 @@ type CityData struct {
 		Value     float64 `json:"value"`
 		Averaging string  `json:"averaging"`
 	} `json:"pollutants"`
-	Stations     []string `json:"stations"`
+	Stations    []string `json:"stations"`
 	PlatformName string   `json:"platformname"`
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
-	}
-
-	username := os.Getenv("USERNAME")
-	password := os.Getenv("PASSWORD")
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-
-	uri := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority", username, password)
 	opts := options.Client().
-		ApplyURI(uri).
+		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
 		SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -91,8 +80,8 @@ func GetCityData(cityName, stationName string) (CityData, error) {
 	collection := client.Database("weatherdata").Collection("dataman")
 
 	filter := bson.M{
-		"cityname":    cityName,
-		"stationname": stationName,
+		"cityname": cityName,
+    "stationname": stationName,
 	}
 	var cityData CityData
 	err = collection.FindOne(context.Background(), filter).Decode(&cityData)
@@ -196,3 +185,4 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	fmt.Println("[SUCCESS] data saved to MongoDB!")
 	done <- true
 }
+

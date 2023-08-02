@@ -1,16 +1,10 @@
-FROM golang:1.20-alpine AS builder
-
+FROM golang:alpine
 WORKDIR /app
-
+ENV TELEGRAM_APITOKEN=YOUR_APITOKEN
+ENV OPENAI_APITOKEN=YOUR_APITOKEN
 COPY go.mod go.sum ./
-
 RUN go mod download
-
-COPY internal ./internal
-COPY cmd ./cmd
-
-RUN go build -o /app/all-ecological-info-telegram-bot ./cmd/
-
+COPY . .
+RUN go build -o main ./cmd/main.go
 EXPOSE 8080
-
-CMD ["/app/all-ecological-info-telegram-bot"]
+CMD ["./main"]

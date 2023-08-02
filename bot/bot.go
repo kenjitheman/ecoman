@@ -10,7 +10,7 @@ import (
 
 	"github.com/enescakir/emoji"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 
 	"main.go/api"
 	"main.go/db"
@@ -41,11 +41,11 @@ func Datafetch(cityname, stationName string) string {
 }
 
 func StartBot() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		fmt.Printf("[ERROR] error loading .env file: %v", err)
-		log.Fatal("[ERROR] error loading .env file")
-	}
+	// err := godotenv.Load("../.env")
+	// if err != nil {
+	// 	fmt.Printf("[ERROR] error loading .env file: %v", err)
+	// 	log.Fatal("[ERROR] error loading .env file")
+	// }
 
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
 	if err != nil {
