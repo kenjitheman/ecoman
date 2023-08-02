@@ -3,20 +3,20 @@ package openai
 import (
 	"context"
 	"fmt"
-	"log"
+	// "log"
 	"os"
 	"strings"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
 )
 
 func GenerateAdvice(result string) string {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		fmt.Printf("[ERROR] error loading .env file: %v", err)
-		log.Fatal("[ERROR] error loading .env file")
-	}
+	// err := godotenv.Load("../.env")
+	// if err != nil {
+	// 	fmt.Printf("[ERROR] error loading .env file: %v", err)
+	// 	log.Fatal("[ERROR] error loading .env file")
+	// }
 	client := openai.NewClient(os.Getenv("OPENAI_APITOKEN"))
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
