@@ -92,8 +92,15 @@ Remember, these recommendations are based on the available data and general guid
 ```
 
 ## Installation
+
 ```
-git clone https://github.com/amodotomi/all-ecological-info-telegram-bot
+go get github.com/kenjitheman/eco_tg_bot 
+```
+
+- or
+
+```
+git clone https://github.com/kenjitheman/eco_tg_bot 
 ```
 - #### to get all dependencies
 ```
