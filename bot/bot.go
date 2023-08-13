@@ -298,10 +298,10 @@ func StartBot() {
 
 		case "support_creator":
 			GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
-			msg.Text = GreenHeartEmoji + " my website: kenjitheman.com\n" + GreenHeartEmoji + " my GitHub: github.com/kenjitheman\n" + GreenHeartEmoji + " thanks for your support!"
+			msg.Text = GreenHeartEmoji + " my website: kenjitheman.dev\n" + GreenHeartEmoji + " my GitHub: github.com/kenjitheman\n" + GreenHeartEmoji + " thanks for your support!"
 		case "stop":
 			isBotRunning = false
-			stopEmoji := emoji.Sprintf("%v", emoji.StopSign)
+			stopEmoji := emoji.Sprintf("%v", emoji.RedCircle)
 			msg.Text = stopEmoji + " ecoman has been stopped"
 			msg.ReplyMarkup = startKeyboard
 
