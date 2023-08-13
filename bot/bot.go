@@ -257,7 +257,7 @@ func StartBot() {
 
 		case "info":
 			infoEmoji := emoji.Sprintf("%v", emoji.Information)
-			msg.Text = infoEmoji + " hey, I'm amodotomi, the creator of ecoman.\n\necoman is a telegram bot that allows you to get the latest information about ecology in Ukraine.\ndata updates every 15 minutes.\n\nenjoy! ^_^"
+			msg.Text = infoEmoji + " hey, I'm kenjitheman, the creator of ecoman.\n\necoman is a telegram bot that allows you to get the latest information about ecology in Ukraine.\ndata updates every 15 minutes.\n\nenjoy! ^_^"
 
 		case "support":
 			chatStates[update.Message.Chat.ID] = "support"
@@ -298,7 +298,7 @@ func StartBot() {
 
 		case "support_creator":
 			GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
-			msg.Text = GreenHeartEmoji + " my website: amodotomi.com\n" + GreenHeartEmoji + " my GitHub: github.com/amodotomi\n" + GreenHeartEmoji + " thanks for your support!"
+			msg.Text = GreenHeartEmoji + " my website: kenjitheman.com\n" + GreenHeartEmoji + " my GitHub: github.com/kenjitheman\n" + GreenHeartEmoji + " thanks for your support!"
 		case "stop":
 			isBotRunning = false
 			stopEmoji := emoji.Sprintf("%v", emoji.StopSign)
