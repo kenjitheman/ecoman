@@ -91,7 +91,7 @@ Based on the data provided for Kyiv on this day, here are some advice:
 Remember, these recommendations are based on the available data and general guidelines. Use your judgment and take into account any personal health considerations or local regulations.
 ```
 
-## Installation
+## installation
 
 ```
 go get github.com/kenjitheman/eco_tg_bot 
@@ -129,13 +129,11 @@ go run main.go
 
 ### ! you need your own mongo database and collection configured to run this project !
 
-## Contributing
+## contributing
 
-- Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+- pull requests are welcome, for major changes, please open an issue first
+to discuss what you would like to change
 
-- Please make sure to update tests as appropriate.
-
-## License
+## license
 
 - [MIT](https://choosealicense.com/licenses/mit/)
