@@ -1,30 +1,18 @@
-<h2 align="left">ecoman - telegram bot allows you get ecology data in Ukraine</h2>
+<h2 align="center">ecoman - telegram bot allows you get ecology data in Ukraine</h2>
 
 ###
 
-<img align="right" height="200" src="https://media.tenor.com/GCun7zWO5NcAAAAC/sakura-tree.gif"  />
-
-###
-
-<div align="left">
+<div align="center">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" height="150" alt="go logo"  />
-  <img width="" />
+  <img width="25" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="150" alt="docker logo"  />
-  <img width="" />
+  <img width="25" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="150" alt="mongodb logo"  />
 </div>
 
 ###
 
-<div align="center">
-  <a href="https://t.me/ecomanchan_bot" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=ecoman&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="telegram logo"  />
-  </a>
-</div>
-
-###
-
-- ecoman is a telegram bot made with Golang
+- ecoman is a telegram bot made with golang
 - you are able to choose city and station you interested in
 
 ### API's in use:
@@ -94,20 +82,14 @@ Remember, these recommendations are based on the available data and general guid
 ## installation
 
 ```
-go get github.com/kenjitheman/eco_tg_bot 
-```
-
-- or
-
-```
 git clone https://github.com/kenjitheman/eco_tg_bot 
 ```
-- #### to get all dependencies
+- to install all dependencies
 ```
-go get go.mod
+go mod tidy
 ```
 
-## Usage
+## usage
 - first of all, create .env file with:
 ```
 TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
