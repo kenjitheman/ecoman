@@ -21,7 +21,7 @@
 ##
 
 ## data you get example
-```
+```md
 🏙️ City: Kyiv
 🏠 Station: Street Henerala Zhmachenka, 4
 🧭 Latitude: 50.458479
@@ -63,7 +63,8 @@
 would you like to receive advice on what is best to do on this day (based on data you got)?
 ```
 - if answer "yes" -> user will receive advice, example:
-```
+
+```md
 Based on the data provided for Kyiv on this day, here are some advice:
 
 1. Humidity is at 100%.
@@ -95,11 +96,11 @@ Use your judgment and take into account any personal health considerations or lo
 
 ## installation
 
-```
+```shell
 git clone https://github.com/kenjitheman/eco_tg_bot 
 ```
 - to install all dependencies
-```
+```shell
 go mod tidy
 ```
 
@@ -107,7 +108,7 @@ go mod tidy
 
 - create .env file with:
 
-```
+```.env
 TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
 USERNAME=YOUR_MONGODB_USERNAME
 PASSWORD=YOUR_MONGODB_PASSWORD
@@ -116,14 +117,14 @@ OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
 
 - run docker container:
 
-```
+```shell
 docker build -t your_image_name .
 docker run -d -p 8080:80 your_image_name
 ```
 
 - or run:
 
-```
+```shell
 cd cmd
 go run main.go
 ```
