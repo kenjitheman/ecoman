@@ -1,4 +1,4 @@
-## ecoman - telegram bot allows you get ecology data in Ukraine
+## telegram bot allows you get ecology data in Ukraine
 
 ###
 
