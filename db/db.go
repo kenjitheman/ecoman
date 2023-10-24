@@ -3,7 +3,12 @@ package db
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/kenjitheman/ecoman/vars"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,14 +30,19 @@ type CityData struct {
 		Value     float64 `json:"value"`
 		Averaging string  `json:"averaging"`
 	} `json:"pollutants"`
-	Stations    []string `json:"stations"`
+	Stations     []string `json:"stations"`
 	PlatformName string   `json:"platformname"`
 }
 
 func getMongoClient() (*mongo.Client, error) {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		fmt.Printf("Error loading .env file: %v", err)
+		log.Panic(err)
+	}
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
-		ApplyURI("mongodb+srv://mewhocanreadandupdate:Redredred212121@cluster0.7havayh.mongodb.net/?retryWrites=true&w=majority").
+		ApplyURI(os.Getenv("MONGO_URI")).
 		SetServerAPIOptions(serverAPI)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -59,7 +69,7 @@ func SaveDataToMongoDB(data CityData) error {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database(vars.DbName).Collection(vars.CollectionName)
 
 	_, err = collection.InsertOne(context.Background(), data)
 	if err != nil {
@@ -77,11 +87,11 @@ func GetCityData(cityName, stationName string) (CityData, error) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database(vars.DbName).Collection(vars.CollectionName)
 
 	filter := bson.M{
-		"cityname": cityName,
-    "stationname": stationName,
+		"cityname":    cityName,
+		"stationname": stationName,
 	}
 	var cityData CityData
 	err = collection.FindOne(context.Background(), filter).Decode(&cityData)
@@ -99,7 +109,7 @@ func FetchDataFromMongoDB(cityName string) ([]CityData, error) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database(vars.DbName).Collection(vars.CollectionName)
 
 	filter := bson.M{
 		"cityname": cityName,
@@ -127,7 +137,7 @@ func FetchAllCityNamesFromMongoDB() ([]string, error) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database(vars.DbName).Collection(vars.CollectionName)
 
 	filter := bson.M{}
 
@@ -163,7 +173,7 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	}
 	defer client.Disconnect(context.Background())
 
-	collection := client.Database("weatherdata").Collection("dataman")
+	collection := client.Database(vars.DbName).Collection(vars.CollectionName)
 
 	_, err = collection.DeleteMany(context.Background(), bson.M{})
 	if err != nil {
@@ -185,4 +195,3 @@ func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
 	fmt.Println("[SUCCESS] data saved to MongoDB!")
 	done <- true
 }
-
