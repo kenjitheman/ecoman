@@ -1,13 +1,13 @@
-module main.go
+module github.com/kenjitheman/ecoman
 
-go 1.20
+go 1.21.3
 
 require (
 	github.com/enescakir/emoji v1.0.0
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/joho/godotenv v1.5.1
-	github.com/sashabaranov/go-openai v1.14.0
-	go.mongodb.org/mongo-driver v1.12.0
+	github.com/sashabaranov/go-openai v1.16.0
+	go.mongodb.org/mongo-driver v1.12.1
 )
 
 require (
