@@ -3,21 +3,22 @@ package openai
 import (
 	"context"
 	"fmt"
-	// "log"
+	"log"
 	"os"
 	"strings"
 
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
+	"github.com/kenjitheman/ecoman/vars"
 	openai "github.com/sashabaranov/go-openai"
 )
 
 func GenerateAdvice(result string) string {
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	fmt.Printf("[ERROR] error loading .env file: %v", err)
-	// 	log.Fatal("[ERROR] error loading .env file")
-	// }
-	client := openai.NewClient(os.Getenv("OPENAI_APITOKEN"))
+	err := godotenv.Load("../.env")
+	if err != nil {
+		fmt.Printf("Error loading .env file (openai.go): %v", err)
+		log.Panic(err)
+	}
+	client := openai.NewClient(os.Getenv("OPENAI_API_TOKEN"))
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -25,7 +26,7 @@ func GenerateAdvice(result string) string {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: result + " here is data, please, can you generate some advices what is best to do on this day, based on data you got",
+					Content: result + vars.Prompt,
 				},
 			},
 		},
