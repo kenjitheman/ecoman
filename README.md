@@ -42,6 +42,46 @@
 git clone https://github.com/kenjitheman/ecoman
 ```
 
+## usage
+
+- create .env file with:
+
+```.env
+TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
+OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
+USERNAME=YOUR_MONGODB_USERNAME
+PASSWORD=YOUR_MONGODB_PASSWORD
+MONGO_URI=YOUR_MONGO_URI
+```
+
+- verify your dependencies
+
+```sh
+go mod tidy
+```
+
+- to run:
+
+```sh
+go run main.go
+```
+
+- run it using docker
+- you need to paste your .env variables
+
+```Dockerfile
+ENV TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
+ENV OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
+ENV USERNAME=YOUR_MONGODB_USERNAME
+ENV PASSWORD=YOUR_MONGODB_PASSWORD
+ENV MONGO_URI=YOUR_MONGO_URI
+```
+
+```sh
+docker build -t your_image_name .
+docker run -d -p 8080:80 your_image_name
+```
+
 ## data you get example
 
 ```md
@@ -118,46 +158,6 @@ Enjoy outdoor activities without any major concerns for air pollution.
 
 Remember, these recommendations are based on the available data and general guidelines.
 Use your judgment and take into account any personal health considerations or local regulations.
-```
-
-## usage
-
-- create .env file with:
-
-```.env
-TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
-OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
-USERNAME=YOUR_MONGODB_USERNAME
-PASSWORD=YOUR_MONGODB_PASSWORD
-MONGO_URI=YOUR_MONGO_URI
-```
-
-- verify your dependencies
-
-```sh
-go mod tidy
-```
-
-- to run:
-
-```sh
-go run main.go
-```
-
-- run it using docker
-    - you need to paste your .env variables
-
-```Dockerfile
-ENV TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
-ENV OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
-ENV USERNAME=YOUR_MONGODB_USERNAME
-ENV PASSWORD=YOUR_MONGODB_PASSWORD
-ENV MONGO_URI=YOUR_MONGO_URI
-```
-
-```sh
-docker build -t your_image_name .
-docker run -d -p 8080:80 your_image_name
 ```
 
 ## contributing
