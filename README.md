@@ -1,7 +1,5 @@
 ## telegram bot allows you get ecology data in Ukraine
 
-###
-
 <div align="center">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" height="150" alt="go logo"  />
   <img width="25" />
@@ -10,17 +8,42 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="150" alt="mongodb logo"  />
 </div>
 
-###
+## project structure
 
-##
-- ecoman is a telegram bot made with golang
-- you are able to choose city and station you interested in
+```go
+.
+├── api
+│   ├── api.go
+│   └── api_test.go
+├── bot
+│   ├── bot.go
+│   ├── core.go
+│   ├── keyboards.go
+│   └── vars.go
+├── db
+│   ├── db.go
+│   └── db_test.go
+├── Dockerfile
+├── go.mod
+├── go.sum
+├── LICENSE
+├── main.go
+├── openai
+│   ├── openai.go
+│   └── openai_test.go
+├── README.md
+└── vars
+    └── vars.go
+```
 
-## API in use:
-- https://www.saveecobot.com
-##
+## installation
+
+```sh
+git clone https://github.com/kenjitheman/ecoman
+```
 
 ## data you get example
+
 ```md
 🏙️ City: Kyiv
 🏠 Station: Street Henerala Zhmachenka, 4
@@ -58,11 +81,14 @@
    + Value: 23
    + Average: 1 hour
 ```
+
 - after getting data user is asked:
+
 ```
-would you like to receive advice on what is best to do on this day (based on data you got)?
+would you like to receive advice on what is best to do on this day?
 ```
-- if answer "yes" -> user will receive advice, example:
+
+- if your answer is yes - user will receive an advice, for example:
 
 ```md
 Based on the data provided for Kyiv on this day, here are some advice:
@@ -94,47 +120,52 @@ Remember, these recommendations are based on the available data and general guid
 Use your judgment and take into account any personal health considerations or local regulations.
 ```
 
-## installation
-
-```shell
-git clone https://github.com/kenjitheman/eco_tg_bot 
-```
-- to install all dependencies
-```shell
-go mod tidy
-```
-
 ## usage
 
 - create .env file with:
 
 ```.env
 TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
+OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
 USERNAME=YOUR_MONGODB_USERNAME
 PASSWORD=YOUR_MONGODB_PASSWORD
-OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
+MONGO_URI=YOUR_MONGO_URI
 ```
 
-- run docker container:
+- verify your dependencies
 
-```shell
-docker build -t your_image_name .
-docker run -d -p 8080:80 your_image_name
+```sh
+go mod tidy
 ```
 
-- or run:
+- to run:
 
-```shell
-cd cmd
+```sh
 go run main.go
 ```
 
-### ! you need your own mongo database and collection configured to run this project !
+- run it using docker
+    - you need to paste your .env variables
+
+```Dockerfile
+ENV TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
+ENV OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
+ENV USERNAME=YOUR_MONGODB_USERNAME
+ENV PASSWORD=YOUR_MONGODB_PASSWORD
+ENV MONGO_URI=YOUR_MONGO_URI
+```
+
+```sh
+docker build -t your_image_name .
+docker run -d -p 8080:80 your_image_name
+```
 
 ## contributing
 
 - pull requests are welcome, for major changes, please open an issue first
 to discuss what you would like to change
+
+- please make sure to update tests as appropriate
 
 ## license
 
