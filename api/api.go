@@ -3,31 +3,30 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
-	"main.go/db"
+	"github.com/kenjitheman/ecoman/db"
+	"github.com/kenjitheman/ecoman/vars"
 )
 
 func FetchAndSaveData() ([]db.CityData, error) {
-	url := "https://api.saveecobot.com/output.json"
-
-	resp, err := http.Get(url)
+	resp, err := http.Get(vars.DataUrl)
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] error making HTTP request: %v", err)
+		return nil, fmt.Errorf("Error making HTTP request: %v", err)
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] error reading response body: %v", err)
+		return nil, fmt.Errorf("Error reading response body: %v", err)
 	}
 
 	var citiesData []db.CityData
 	err = json.Unmarshal(body, &citiesData)
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] error parsing JSON: %v", err)
+		return nil, fmt.Errorf("Error parsing JSON: %v", err)
 	}
 
 	done := make(chan bool)
@@ -37,11 +36,10 @@ func FetchAndSaveData() ([]db.CityData, error) {
 	case <-done:
 		return citiesData, nil
 	case <-time.After(5 * time.Minute):
-		return nil, fmt.Errorf("[ERROR] data saving took too long")
+		return nil, fmt.Errorf("Error: data saving took too long")
 	}
 }
 
 func GetCityDataFromMongoDB(cityName, stationName string) (db.CityData, error) {
 	return db.GetCityData(cityName, stationName)
 }
-
