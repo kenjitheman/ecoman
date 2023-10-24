@@ -8,48 +8,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/enescakir/emoji"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	// "github.com/joho/godotenv"
-
-	"main.go/api"
-	"main.go/db"
-	ai "main.go/openai"
+	"github.com/joho/godotenv"
+	"github.com/kenjitheman/ecoman/api"
+	"github.com/kenjitheman/ecoman/db"
+	"github.com/kenjitheman/ecoman/openai"
 )
 
-var isBotRunning bool
-
-func Datafetch(cityname, stationName string) string {
-	cityData, err := api.GetCityDataFromMongoDB(cityname, stationName)
+func Start() {
+	err := godotenv.Load("../.env")
 	if err != nil {
-		fmt.Printf("[ERROR] error fetching city data from MongoDB: %v", err)
-		return "error fetching city data! \ncity is incorrect!"
-	} else {
-		result := fmt.Sprintf("%v City: %s\n", emoji.Cityscape, cityData.CityName)
-		result += fmt.Sprintf("%v Station: %s\n", emoji.House, cityData.StationName)
-		result += fmt.Sprintf("%v Latitude: %s\n%v Longitude: %s\n%v Timezone: %s\n",
-			emoji.Compass, cityData.Latitude,
-			emoji.Compass, cityData.Longitude,
-			emoji.ThreeOClock, cityData.Timezone)
-		for _, pollutant := range cityData.Pollutants {
-			pollutantInfo := fmt.Sprintf("%v Pollutant: %s\n   + Units: %s\n   + Time: %v\n   + Value: %v\n   + Average: %v\n",
-				emoji.GemStone, pollutant.Pol, pollutant.Unit, pollutant.Time, pollutant.Value, pollutant.Averaging)
-			result += pollutantInfo
-		}
-		return result
+		fmt.Printf("Error loading .env file (bot.go): %v", err)
+		log.Panic(err)
 	}
-}
-
-func StartBot() {
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	fmt.Printf("[ERROR] error loading .env file: %v", err)
-	// 	log.Fatal("[ERROR] error loading .env file")
-	// }
 
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
 	if err != nil {
-		fmt.Printf("[ERROR] error starting bot: %v", err)
+		fmt.Printf("Error starting bot: %v", err)
 		log.Panic(err)
 	}
 
@@ -66,41 +41,8 @@ func StartBot() {
 
 	go api.FetchAndSaveData()
 
-	generalKeyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("help"),
-			tgbotapi.NewKeyboardButton("getdata"),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("info"),
-			tgbotapi.NewKeyboardButton("status"),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("support"),
-			tgbotapi.NewKeyboardButton("support_creator"),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("stop"),
-		),
-	)
-
-	startKeyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("start"),
-		),
-	)
-
-	yesOrNoKeyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("yes"),
-			tgbotapi.NewKeyboardButton("no"),
-		),
-	)
-
 	isBotRunning = false
-
 	chatStates := make(map[int64]string)
-	creatorChatID := int64(5785150199)
 
 	for update := range updates {
 		if update.Message == nil {
@@ -111,26 +53,21 @@ func StartBot() {
 		command := strings.TrimPrefix(update.Message.Text, "/")
 
 		switch command {
-		case "start":
+		case "start", "/start":
 			isBotRunning = true
 			if isBotRunning {
-				StartOkEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
-				msg.Text = StartOkEmoji + " ecoman is already running\nuse /stop to stop the bot\nuse /help for more information"
-				msg.ReplyMarkup = generalKeyboard
+				msg.Text = AlreadyRunningMsg
+				msg.ReplyMarkup = GeneralKeyboard
 			} else {
-				leafGreenEmoji := emoji.Sprintf("%v", emoji.LeafyGreen)
-				msg.Text = leafGreenEmoji + " hey, let's start\nrun /help for usage info!"
-				msg.ReplyMarkup = startKeyboard
+				msg.Text = StartMsg
+				msg.ReplyMarkup = StartKeyboard
 			}
 
-		case "help":
-			helpEmoji := emoji.Sprintf("%v", emoji.Information)
-			msg.Text = helpEmoji + " all available commands:\n\n/help - use if you need some help\n\n/getdata - use to get all ecoman data, specify the city name\n\n/status - use to see working status\n\n/info - use to see more info about creator and bot\n\n/support - use if you found a bug etc.\n\n/support_creator - It's an open-source free-to-use product, so I don't get any money from it\n\n/stop - use stop command to stop the bot"
+		case "help", "/help":
+			msg.Text = HelpMsg
 
-		case "getdata":
-			getdataEmoji := emoji.Sprintf("%v", emoji.Cityscape)
-			fetchingMessage := getdataEmoji + " please select a city from the list:"
-			msg.Text = fetchingMessage
+		case "getdata", "/getdata", "get data":
+			msg.Text = FetchingMsg
 			cityNames, err := db.FetchAllCityNamesFromMongoDB()
 			if err != nil {
 				fmt.Printf("[ERROR] failed to fetch city names: %v\n", err)
@@ -180,7 +117,7 @@ func StartBot() {
 						}
 						if len(cityData) == 0 {
 							noDataMessage := fmt.Sprintf(
-								"no data found for city: %s",
+								NoDataMsg,
 								selectedCityName,
 							)
 							msg := tgbotapi.NewMessage(update.Message.Chat.ID, noDataMessage)
@@ -188,9 +125,7 @@ func StartBot() {
 							break
 						}
 
-						getdataEmoji = emoji.Sprintf("%v", emoji.Cityscape)
-						fetchingMessage = getdataEmoji + " please select a station from the list:"
-						msg.Text = fetchingMessage
+						msg.Text = FetchingMsg
 
 						var stationButtons [][]tgbotapi.KeyboardButton
 						row := []tgbotapi.KeyboardButton{}
@@ -218,48 +153,40 @@ func StartBot() {
 					}
 				}
 				if selectedCity && selectedStation {
-					adviceMsg := "would you like to receive advice on what is best to do on this day (based on data you got)?"
-					msg.Text = adviceMsg
-					msg.ReplyMarkup = yesOrNoKeyboard
+					msg.Text = AdviceMsg
+					msg.ReplyMarkup = YesOrNoKeyboard
 					bot.Send(msg)
 
 					for {
 						response := <-updates
 
-						gotchaEmoji := emoji.Sprintf("%v", emoji.OkHand)
-						yesMsg := gotchaEmoji + " one second please..."
-						noMsg := gotchaEmoji + " i gotcha!"
-
 						if response.Message.Text == "yes" {
-							msg.Text = yesMsg
-              advice := ai.GenerateAdvice(result)
-              msg.Text = advice
+							msg.Text = YesMsg
+							advice := openai.GenerateAdvice(result)
+							msg.Text = advice
 						} else {
-							msg.Text = noMsg
+							msg.Text = NoMsg
 						}
 						break
 					}
 
-					msg.ReplyMarkup = generalKeyboard
+					msg.ReplyMarkup = GeneralKeyboard
 					bot.Send(msg)
 					break
 				}
 			}
 
-		case "status":
+		case "status", "/status":
 			if err == nil {
-				statusEmoji := emoji.Sprintf("%v", emoji.GreenCircle)
-				msg.Text = statusEmoji + " ecoman is ok, working fine! ^_^"
+				msg.Text = StatusOkMsg
 			} else {
-				statusEmoji := emoji.Sprintf("%v", emoji.RedCircle)
-				msg.Text = statusEmoji + " ecoman is not ok, something isn't fine -_-\ntry again later -_-"
+				msg.Text = StatusNotOkMsg
 			}
 
-		case "info":
-			infoEmoji := emoji.Sprintf("%v", emoji.Information)
-			msg.Text = infoEmoji + " hey, I'm kenjitheman, the creator of ecoman.\n\necoman is a telegram bot that allows you to get the latest information about ecology in Ukraine.\ndata updates every 15 minutes.\n\nenjoy! ^_^"
+		case "info", "/info":
+			msg.Text = InfoMsg
 
-		case "support":
+		case "bug_report", "/bug_report", "bug report":
 			chatStates[update.Message.Chat.ID] = "support"
 			msg.Text = "please describe the problem:"
 			bot.Send(msg)
@@ -276,14 +203,13 @@ func StartBot() {
 				}
 
 				description := response.Message.Text
-				GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
-				msg.Text = GreenHeartEmoji + " thanks for your bug report!"
+				msg.Text = ThxMsg
 				bot.Send(msg)
 
 				supportMsg := tgbotapi.NewMessage(
 					creatorChatID,
 					fmt.Sprintf(
-						" bug report from user %s:\n%s",
+						BugReportMsg,
 						update.Message.From.UserName,
 						description,
 					),
@@ -296,18 +222,13 @@ func StartBot() {
 
 			continue
 
-		case "support_creator":
-			GreenHeartEmoji := emoji.Sprintf("%v", emoji.GreenHeart)
-			msg.Text = GreenHeartEmoji + " my website: kenjitheman.dev\n" + GreenHeartEmoji + " my GitHub: github.com/kenjitheman\n" + GreenHeartEmoji + " thanks for your support!"
-		case "stop":
+		case "stop", "/stop":
 			isBotRunning = false
-			stopEmoji := emoji.Sprintf("%v", emoji.RedCircle)
-			msg.Text = stopEmoji + " ecoman has been stopped"
-			msg.ReplyMarkup = startKeyboard
+			msg.Text = StopMsg
+			msg.ReplyMarkup = StartKeyboard
 
 		default:
-			defaultEmoji := emoji.Sprintf("%v", emoji.OkHand)
-			msg.Text = defaultEmoji + " sorry, i don't know that command\nuse /help for a list of all commands or help ^_^"
+			msg.Text = IdkMsg
 		}
 
 		if _, err := bot.Send(msg); err != nil {
