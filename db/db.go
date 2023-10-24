@@ -34,7 +34,7 @@ type CityData struct {
 	PlatformName string   `json:"platformname"`
 }
 
-func getMongoClient() (*mongo.Client, error) {
+func GetMongoClient() (*mongo.Client, error) {
 	err := godotenv.Load("../.env")
 	if err != nil {
 		fmt.Printf("Error loading .env file: %v", err)
@@ -63,7 +63,7 @@ func getMongoClient() (*mongo.Client, error) {
 }
 
 func SaveDataToMongoDB(data CityData) error {
-	client, err := getMongoClient()
+	client, err := GetMongoClient()
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func SaveDataToMongoDB(data CityData) error {
 }
 
 func GetCityData(cityName, stationName string) (CityData, error) {
-	client, err := getMongoClient()
+	client, err := GetMongoClient()
 	if err != nil {
 		return CityData{}, err
 	}
@@ -103,7 +103,7 @@ func GetCityData(cityName, stationName string) (CityData, error) {
 }
 
 func FetchDataFromMongoDB(cityName string) ([]CityData, error) {
-	client, err := getMongoClient()
+	client, err := GetMongoClient()
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func FetchDataFromMongoDB(cityName string) ([]CityData, error) {
 }
 
 func FetchAllCityNamesFromMongoDB() ([]string, error) {
-	client, err := getMongoClient()
+	client, err := GetMongoClient()
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func FetchAllCityNamesFromMongoDB() ([]string, error) {
 }
 
 func AsyncSaveDataToMongoDB(data []CityData, done chan<- bool) {
-	client, err := getMongoClient()
+	client, err := GetMongoClient()
 	if err != nil {
 		fmt.Printf("[ERROR] failed to connect to MongoDB: %v\n", err)
 		done <- true
