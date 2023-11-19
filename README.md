@@ -1,4 +1,6 @@
-## telegram bot allows you get ecology data in Ukraine
+# ecoman
+
+### Telegram bot allows you get ecology data in Ukraine
 
 <div align="center">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" height="150" alt="go logo"  />
@@ -8,7 +10,7 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="150" alt="mongodb logo"  />
 </div>
 
-## project structure
+## Project structure
 
 ```go
 .
@@ -36,15 +38,15 @@
     └── vars.go
 ```
 
-## installation
+## Installation
 
-```sh
+```shell
 git clone https://github.com/kenjitheman/ecoman
 ```
 
-## usage
+## Usage
 
-- create .env file with:
+- Create .env file with:
 
 ```.env
 TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
@@ -54,22 +56,22 @@ PASSWORD=YOUR_MONGODB_PASSWORD
 MONGO_URI=YOUR_MONGO_URI
 ```
 
-- verify your dependencies
+- Verify your dependencies:
 
-```sh
+```shell
 go mod tidy
 ```
 
-- to run:
+- To run:
 
-```sh
+```shell
 go run main.go
 ```
 
-- run it using docker
-- you need to paste your .env variables
+- Run it using docker
+- You need to paste your .env variables
 
-```Dockerfile
+```dockerfile
 ENV TELEGRAM_APITOKEN=YOUR_TELEGRAM_API_TOKEN
 ENV OPENAI_APITOKEN=YOUR_OPENAI_API_TOKEN
 ENV USERNAME=YOUR_MONGODB_USERNAME
@@ -77,12 +79,12 @@ ENV PASSWORD=YOUR_MONGODB_PASSWORD
 ENV MONGO_URI=YOUR_MONGO_URI
 ```
 
-```sh
+```shell
 docker build -t your_image_name .
 docker run -d -p 8080:80 your_image_name
 ```
 
-## data you get example
+## Data you get example:
 
 ```md
 🏙️ City: Kyiv
@@ -122,13 +124,13 @@ docker run -d -p 8080:80 your_image_name
    + Average: 1 hour
 ```
 
-- after getting data user is asked:
+- After getting data user is asked:
 
 ```
-would you like to receive advice on what is best to do on this day?
+Would you like to receive advice on what is best to do on this day?
 ```
 
-- if your answer is yes - user will receive an advice, for example:
+- If your answer is yes - user will receive an advice, for example:
 
 ```md
 Based on the data provided for Kyiv on this day, here are some advice:
@@ -160,13 +162,13 @@ Remember, these recommendations are based on the available data and general guid
 Use your judgment and take into account any personal health considerations or local regulations.
 ```
 
-## contributing
+## Contributing
 
-- pull requests are welcome, for major changes, please open an issue first
-to discuss what you would like to change
+- Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
 
-- please make sure to update tests as appropriate
+- Please make sure to update tests as appropriate.
 
-## license
+## License
 
 - [MIT](https://choosealicense.com/licenses/mit/)
