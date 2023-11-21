@@ -40,7 +40,7 @@
 
 ## Installation
 
-```shell
+```sh
 git clone https://github.com/kenjitheman/ecoman
 ```
 
@@ -58,13 +58,13 @@ MONGO_URI=YOUR_MONGO_URI
 
 - Verify your dependencies:
 
-```shell
+```sh
 go mod tidy
 ```
 
 - To run:
 
-```shell
+```sh
 go run main.go
 ```
 
@@ -79,7 +79,7 @@ ENV PASSWORD=YOUR_MONGODB_PASSWORD
 ENV MONGO_URI=YOUR_MONGO_URI
 ```
 
-```shell
+```sh
 docker build -t your_image_name .
 docker run -d -p 8080:80 your_image_name
 ```
