@@ -13,7 +13,8 @@
 ## Project structure
 
 ```go
-.
+ecoman
+│
 ├── api
 │   ├── api.go
 │   └── api_test.go
