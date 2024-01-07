@@ -10,9 +10,9 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
-	"github.com/kenjitheman/ecoman/api"
-	"github.com/kenjitheman/ecoman/db"
-	"github.com/kenjitheman/ecoman/openai"
+	"github.com/btwkenji/ecoman/api"
+	"github.com/btwkenji/ecoman/db"
+	"github.com/btwkenji/ecoman/openai"
 )
 
 func Start() {

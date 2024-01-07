@@ -42,7 +42,7 @@ ecoman
 ## Installation
 
 ```sh
-git clone https://github.com/kenjitheman/ecoman
+git clone https://github.com/btwkenji/ecoman
 ```
 
 ## Usage

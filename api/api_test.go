@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/kenjitheman/ecoman/vars"
+	"github.com/btwkenji/ecoman/vars"
 	"net/http"
 	"testing"
 	"time"

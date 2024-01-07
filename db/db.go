@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/btwkenji/ecoman/vars"
 	"github.com/joho/godotenv"
-	"github.com/kenjitheman/ecoman/vars"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
