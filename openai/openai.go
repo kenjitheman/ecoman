@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
-	"github.com/btwkenji/ecoman/vars"
+	"github.com/kenjitheman/ecoman/vars"
 	openai "github.com/sashabaranov/go-openai"
 )
 

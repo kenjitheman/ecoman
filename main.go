@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/btwkenji/ecoman/bot"
+	"github.com/kenjitheman/ecoman/bot"
 )
 
 func main() {

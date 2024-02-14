@@ -3,7 +3,7 @@ package bot
 import (
 	"fmt"
 	"github.com/enescakir/emoji"
-	"github.com/btwkenji/ecoman/api"
+	"github.com/kenjitheman/ecoman/api"
 )
 
 func Datafetch(cityname, stationName string) string {

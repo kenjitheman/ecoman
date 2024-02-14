@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/btwkenji/ecoman/db"
-	"github.com/btwkenji/ecoman/vars"
+	"github.com/kenjitheman/ecoman/db"
+	"github.com/kenjitheman/ecoman/vars"
 )
 
 func FetchAndSaveData() ([]db.CityData, error) {
